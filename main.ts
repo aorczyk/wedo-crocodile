@@ -20,3 +20,24 @@ basic.forever(function () {
         lastState = state;
     }
 })
+
+pfReceiver.connectIrReceiver(DigitalPin.P2)
+let isOpen = true;
+
+pfReceiver.onRCcommand(PfReceiverChannel.Channel2, PfControl.Forward, PfControl.Float, PfAction.Pressed, function() {
+    if (isOpen){
+        pfTransmitter.singleOutputMode(PfChannel.Channel1, PfOutput.Red, PfSingleOutput.Backward7)
+        basic.pause(200);
+        pfTransmitter.singleOutputMode(PfChannel.Channel1, PfOutput.Red, PfSingleOutput.BrakeThenFloat)
+        isOpen = false
+    }
+})
+
+pfReceiver.onRCcommand(PfReceiverChannel.Channel2, PfControl.Float, PfControl.Float, PfAction.Pressed, function() {
+    if (!isOpen) {
+        pfTransmitter.singleOutputMode(PfChannel.Channel1, PfOutput.Red, PfSingleOutput.Forward3)
+        basic.pause(200);
+        pfTransmitter.singleOutputMode(PfChannel.Channel1, PfOutput.Red, PfSingleOutput.BrakeThenFloat)
+        isOpen = true
+    }
+})
